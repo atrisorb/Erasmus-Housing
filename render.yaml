@@ -7,7 +7,7 @@ services:
     env: python
     region: frankfurt # Scegli la regione più vicina ai tuoi utenti
     plan: free # O un piano a pagamento se necessario
-    buildCommand: "pip install -r requirements.txt"
+    buildCommand: "npm install && npm run build:css && pip install -r requirements.txt"
     startCommand: "gunicorn app:app" # Avvia Flask con Gunicorn
     healthCheckPath: /api/auth/status # Un endpoint semplice per i controlli di integrità
     envVars:
