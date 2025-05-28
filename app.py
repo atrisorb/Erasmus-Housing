@@ -21,7 +21,8 @@ import hmac
 import hashlib
 
 # --- Configurazione Applicazione ---
-app = Flask(__name__, static_folder='.', static_url_path='')
+app = Flask(__name__, static_folder='static', template_folder='templates')
+# o semplicemente app = Flask(__name__) se usi i nomi di cartella standard 'static' e 'templates'
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key-!change-me!")
 CORS(app, resources={r"/api/*": {"origins": "*"}, r"/login/*": {"origins": "*"}}, supports_credentials=True)
 
