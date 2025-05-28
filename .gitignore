@@ -1,0 +1,37 @@
+# Ambiente Virtuale Python
+venv/
+env/
+*.pyc
+__pycache__/
+
+# Dipendenze Node.js
+node_modules/
+
+# File CSS generato da Tailwind
+static/css/output.css 
+# O qualsiasi altro percorso/nome tu abbia scelto per il CSS di output
+
+# Log e Cache di NPM
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*_logs/
+npm-cache/
+
+# File specifici del sistema operativo e dell'editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# File .env (per variabili d'ambiente locali)
+.env
+
+# Eventuali cartelle di build o distribuzione di Vite (se l'avessi usato)
+# dist/
+# .vite/
+
+# Altri file di build temporanei
+build/
+dist/
