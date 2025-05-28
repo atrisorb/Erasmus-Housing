@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="pageTitleListingDetail">Dettaglio Alloggio - Erasmus Housing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gallery-image { aspect-ratio: 16 / 9; object-fit: cover; }
+        .thumbnail-gallery img { aspect-ratio: 4 / 3; object-fit: cover; }
+        #mobileMenu { transition: max-height 0.3s ease-out, opacity 0.3s ease-out; max-height: 0; opacity:0; overflow: hidden; }
+        #mobileMenu.open { max-height: 500px; opacity: 1; }
+        .language-switcher button { padding: 0.25rem 0.5rem; margin-left: 0.25rem; border-radius: 0.25rem; border: 1px solid transparent;}
+        .language-switcher button.active { background-color: #4f46e5; color: white; border-color: #4f46e5;}
+        .language-switcher button:not(.active):hover { background-color: #e0e7ff; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <a href="index.html" class="text-2xl font-bold text-indigo-600 mr-2 sm:mr-4">ErasmusHousing</a>
+                <div class="language-switcher text-xs flex">
+                    <button id="lang-it" data-lang="it" class="border-gray-300">IT</button>
+                    <button id="lang-en" data-lang="en" class="border-gray-300">EN</button>
+                </div>
+            </div>
+            <div class="md:hidden">
+                <button id="mobileMenuButton" aria-label="Apri menu" class="text-gray-700 focus:outline-none">
+                    <svg id="menuIconOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    <svg id="menuIconClose" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div id="navLinksDesktop" class="hidden md:flex space-x-3 lg:space-x-4 items-center text-sm lg:text-base">
+                <a href="index.html" data-translate-key="navHome" class="text-gray-600 hover:text-indigo-600 px-2 py-1">Home</a>
+                <a href="listings.html" data-translate-key="navListings" class="text-gray-600 hover:text-indigo-600 px-2 py-1">Annunci</a>
+                <a href="messages.html" id="navMessagesLinkDesktop" data-translate-key="navMessages" class="text-gray-600 hover:text-indigo-600 px-2 py-1 hidden">Messaggi</a>
+                <a href="add-listing.html" id="navAddListingLinkDesktop" data-translate-key="navAddListing" class="text-gray-600 hover:text-indigo-600 px-2 py-1">Pubblica Annuncio</a>
+                <a href="login.html" id="navLoginLinkDesktop" data-translate-key="navLogin" class="bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 text-sm">Login</a>
+                <div id="navUserProfileDesktop" class="hidden inline-flex items-center">
+                    <img id="navUserPicDesktop" src="https://placehold.co/40x40/A0AEC0/FFFFFF?text=U" alt="User" class="w-8 h-8 rounded-full mr-2 hidden object-cover">
+                    <span id="navUserNameDesktop" class="text-gray-700 mr-2 text-sm font-medium"></span>
+                    <button id="navLogoutBtnDesktop" data-translate-key="navLogout" class="bg-red-500 text-white px-2.5 py-1 rounded-md hover:bg-red-600 text-xs">Logout</button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobileMenu" class="md:hidden bg-white shadow-lg absolute top-full left-0 right-0 z-30">
+            <a href="index.html" data-translate-key="navHome" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 border-b border-gray-100">Home</a>
+            <a href="listings.html" data-translate-key="navListings" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 border-b border-gray-100">Annunci</a>
+            <a href="messages.html" id="navMessagesLinkMobile" data-translate-key="navMessages" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 border-b border-gray-100 hidden">Messaggi</a>
+            <a href="add-listing.html" id="navAddListingLinkMobile" data-translate-key="navAddListing" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 border-b border-gray-100">Pubblica Annuncio</a>
+            <div class="px-4 py-3 mt-2 border-t border-gray-200">
+                <a href="login.html" id="navLoginLinkMobile" data-translate-key="navLogin" class="block text-center w-full bg-indigo-600 text-white px-4 py-2.5 rounded-md hover:bg-indigo-700 mb-2">Login</a>
+                <div id="navUserProfileMobile" class="hidden text-center">
+                    <img id="navUserPicMobile" src="https://placehold.co/40x40/A0AEC0/FFFFFF?text=U" alt="User" class="w-10 h-10 rounded-full mx-auto mb-2 hidden object-cover">
+                    <span id="navUserNameMobile" class="block text-gray-700 mb-2 font-medium"></span>
+                    <button id="navLogoutBtnMobile" data-translate-key="navLogout" class="w-full bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 py-8 md:py-12">
+        <div id="listingDataContainer" class="bg-white p-4 sm:p-6 md:p-8 rounded-lg shadow-xl">
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-1 sm:mb-2" id="listing-title" data-translate-key="loadingText">Caricamento...</h1>
+            <p class="text-base sm:text-lg text-gray-600 mb-4 sm:mb-6" id="listing-location"></p>
+
+            <section class="mb-6 md:mb-8">
+                <img src="https://placehold.co/800x600/E2E8F0/A0AEC0?text=Immagine..." alt="Immagine principale alloggio" id="main-image" class="w-full rounded-lg shadow-md gallery-image mb-4">
+                <div id="thumbnailContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 thumbnail-gallery">
+                    </div>
+            </section>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+                <div class="lg:col-span-2 space-y-6 md:space-y-8">
+                    <section>
+                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-700 mb-3 sm:mb-4" data-translate-key="descriptionTitle">Descrizione</h2>
+                        <p class="text-sm sm:text-base text-gray-600 leading-relaxed" id="listing-description"></p>
+                    </section>
+                    <section>
+                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-700 mb-3 sm:mb-4" data-translate-key="availabilityDatesTitle">Date Disponibilità</h2>
+                        <p class="text-sm sm:text-base text-gray-600">
+                            <span class="font-medium" data-translate-key="availabilityFrom">Da:</span> <span id="availability-start-date">N/D</span>
+                        </p>
+                        <p class="text-sm sm:text-base text-gray-600">
+                            <span class="font-medium" data-translate-key="availabilityTo">A:</span> <span id="availability-end-date">N/D</span>
+                        </p>
+                    </section>
+                    <section>
+                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-700 mb-3 sm:mb-4" data-translate-key="featuresTitle">Caratteristiche</h2>
+                        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 sm:gap-x-6 gap-y-2 sm:gap-y-3 text-sm sm:text-base text-gray-600" id="listing-features"></ul>
+                    </section>
+                    <section>
+                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-700 mb-3 sm:mb-4" data-translate-key="mapLocationTitle">Posizione sulla Mappa</h2>
+                        <div class="aspect-w-16 aspect-h-9 bg-gray-300 rounded-lg flex items-center justify-center text-gray-500">
+                            <p data-translate-key="mapPlaceholder">Mappa (placeholder)</p>
+                        </div>
+                    </section>
+                </div>
+
+                <aside class="lg:col-span-1 space-y-4 sm:space-y-6">
+                    <div class="p-4 sm:p-6 bg-indigo-50 rounded-lg shadow">
+                        <p class="text-2xl sm:text-3xl font-bold text-indigo-700 mb-1" id="listing-price"></p>
+                        <p class="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4" id="listing-price-notes" data-translate-key="pricePerMonth">/mese</p>
+                        <button id="contactOwnerBtn" class="w-full bg-green-500 text-white px-4 py-2.5 sm:px-6 sm:py-3 rounded-md hover:bg-green-600 font-semibold text-base sm:text-lg hidden" data-translate-key="contactOwnerButton">Contatta il Proprietario</button>
+                        <p id="loginToContactMsg" class="text-center text-sm text-gray-600 hidden"><a href="login.html" class="text-indigo-600 hover:underline font-semibold" data-translate-key="loginToContactLink">Accedi</a> <span data-translate-key="loginToContactText">per contattare.</span></p>
+                        <button id="saveFavoriteBtn" class="w-full mt-3 bg-gray-200 text-gray-700 px-4 py-2.5 sm:px-6 sm:py-3 rounded-md hover:bg-gray-300 font-semibold text-sm sm:text-base" data-translate-key="saveToFavoritesButton">Salva nei Preferiti</button>
+                    </div>
+                    <div class="p-4 sm:p-6 bg-white rounded-lg shadow">
+                        <h3 class="text-lg sm:text-xl font-semibold text-gray-700 mb-3" data-translate-key="landlordInfoTitle">Informazioni sul Locatore</h3>
+                        <div class="flex items-center mb-3">
+                            <img src="https://placehold.co/80x80/A0AEC0/FFFFFF?text=Host" alt="Foto Locatore" id="host-pic" class="w-12 h-12 sm:w-16 sm:h-16 rounded-full mr-3 sm:mr-4 object-cover">
+                            <div><p class="font-semibold text-gray-800 text-sm sm:text-base" id="host-name"></p><p class="text-xs sm:text-sm text-gray-500" id="host-role" data-translate-key="landlordRole">Proprietario/a</p></div>
+                        </div>
+                        <p class="text-xs sm:text-sm text-gray-600" data-translate-key="memberSince">Membro da: <span id="host-member-since">N/D</span></p>
+                    </div>
+                    <div class="p-4 sm:p-6 bg-white rounded-lg shadow">
+                        <h3 class="text-lg sm:text-xl font-semibold text-gray-700 mb-3" data-translate-key="houseRulesTitle">Regole della Casa</h3>
+                        <ul class="list-disc list-inside text-gray-600 space-y-1 text-xs sm:text-sm" id="house-rules"><li data-translate-key="noRulesSpecified">Nessuna regola specificata.</li></ul>
+                    </div>
+                </aside>
+            </div>
+        </div>
+        <div id="listingError" class="hidden text-center text-red-600 py-10"></div>
+    </main>
+
+    <footer id="contact" class="bg-gray-800 text-white py-10 md:py-12 mt-12 md:mt-16">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                <div><h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4" data-translate-key="footerErasmusHousing">ErasmusHousing</h3><p class="text-sm text-gray-400" data-translate-key="footerDescription">La tua piattaforma per alloggi Erasmus.</p></div>
+                <div><h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4" data-translate-key="footerUsefulLinks">Link Utili</h3><ul class="space-y-1.5 sm:space-y-2"><li class="text-sm"><a href="index.html#contact" data-translate-key="footerContactUsInline" class="text-gray-400 hover:text-white">Contatti</a></li><li class="text-sm"><a href="listings.html" data-translate-key="footerSearchListings" class="text-gray-400 hover:text-white">Cerca Annunci</a></li><li class="text-sm"><a href="add-listing.html" id="footerAddListingLink" data-translate-key="footerAddListing" class="text-gray-400 hover:text-white">Pubblica Annuncio</a></li></ul></div>
+                <div>
+                    <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4" data-translate-key="footerContactUs">Contattaci</h3>
+                    <p class="text-sm text-gray-400">Email: info@erasmus-housing.com</p>
+                    <div class="flex space-x-4 mt-4 justify-center md:justify-start">
+                        <a href="https://www.instagram.com/erasmushousing/?utm_source=ig_web_button_share_sheet" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white" aria-label="Instagram">
+                            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6"> {/* Nota: rimosso fill="currentColor" e viewBox modificato se necessario */}
+                                <defs>
+                                    <radialGradient id="instaGradient" gradientUnits="userSpaceOnUse" cx="19.38" cy="42.035" r="44.899">
+                                        <stop offset="0" stop-color="#fd5"/>
+                                        <stop offset=".328" stop-color="#ff543f"/>
+                                        <stop offset=".348" stop-color="#fc5245"/>
+                                        <stop offset=".504" stop-color="#e64771"/>
+                                        <stop offset=".643" stop-color="#d53e91"/>
+                                        <stop offset=".761" stop-color="#cc39a4"/>
+                                        <stop offset=".841" stop-color="#c837ab"/>
+                                    </radialGradient>
+                                </defs>
+                                <path fill="url(#instaGradient)" d="M34.017,41.99l-20,0.019c-4.4,0.004-8.003-3.592-8.008-7.992l-0.019-20	c-0.004-4.4,3.592-8.003,7.992-8.008l20-0.019c4.4-0.004,8.003,3.592,8.008,7.992l0.019,20	C42.014,38.383,38.417,41.986,34.017,41.99z"/>
+                                <path fill="#fff" d="M24,31c-3.859,0-7-3.141-7-7s3.141-7,7-7s7,3.141,7,7S27.859,31,24,31z M24,19c-2.757,0-5,2.243-5,5	s2.243,5,5,5s5-2.243,5-5S26.757,19,24,19z"/>
+                                <circle cx="31.5" cy="16.5" r="1.5" fill="#fff"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 border-t border-gray-700 pt-8 text-center text-gray-500 text-sm"><p>&copy; <span id="currentYearDetail"></span> ErasmusHousing. <span data-translate-key="footerAllRightsReserved">Tutti i diritti riservati.</span></p></div>
+        </div>
+    </footer>
+
+    <script>
+        // IMPORTANTE: Sostituisci 'IL_TUO_URL_RENDER_QUI' con l'URL effettivo del tuo servizio Render.
+        const API_BASE_URL = 'https://erasmushousing.onrender.com'; 
+        let currentListingDataGlobal = null;
+        let currentUserIdGlobal = null;
+
+        document.getElementById('currentYearDetail').textContent = new Date().getFullYear();
+        function changeMainImage(newSrc) { document.getElementById('main-image').src = newSrc; }
+
+        async function loadListingDetailsPage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const listingId = urlParams.get('id');
+            const listingDataContainer = document.getElementById('listingDataContainer');
+            const listingErrorEl = document.getElementById('listingError');
+
+            if (!listingId) {
+                listingDataContainer.classList.add('hidden');
+                listingErrorEl.textContent = "ID annuncio non specificato."; // Questa stringa andrà tradotta se necessario
+                listingErrorEl.classList.remove('hidden');
+                return;
+            }
+             if (API_BASE_URL === 'IL_TUO_URL_RENDER_QUI' && !window.location.href.startsWith('file://')) {
+                listingDataContainer.classList.add('hidden');
+                listingErrorEl.textContent = "L'URL dell'API non è configurato."; // Questa stringa andrà tradotta
+                listingErrorEl.classList.remove('hidden');
+                return;
+            }
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/listings/${listingId}`);
+                if (!response.ok) throw new Error(`Errore HTTP: ${response.status}`);
+                currentListingDataGlobal = await response.json();
+                if (currentListingDataGlobal.error) throw new Error(currentListingDataGlobal.error);
+
+                listingDataContainer.classList.remove('hidden');
+                listingErrorEl.classList.add('hidden');
+
+                document.getElementById('listing-title').textContent = currentListingDataGlobal.title || "Titolo non disponibile";
+                document.getElementById('listing-location').textContent = `${currentListingDataGlobal.city || 'N/D'}, ${currentListingDataGlobal.country || 'N/D'}`;
+                document.getElementById('listing-price').innerHTML = `€${currentListingDataGlobal.price_eur_month || 'N/D'} <span class="text-lg font-normal text-gray-600" data-translate-key="pricePerMonth">/mese</span>`;
+                document.getElementById('listing-description').textContent = currentListingDataGlobal.description || "Nessuna descrizione.";
+                document.getElementById('main-image').src = currentListingDataGlobal.image_url || 'https://placehold.co/800x600/E2E8F0/A0AEC0?text=Immagine';
+                
+                const startDateEl = document.getElementById('availability-start-date');
+                const endDateEl = document.getElementById('availability-end-date');
+                const currentLangForDate = localStorage.getItem('erasmusHousingLang') || 'it';
+                const dateOptions = { timeZone: 'UTC', day: '2-digit', month: '2-digit', year: 'numeric' };
+                
+                if(startDateEl) startDateEl.textContent = currentListingDataGlobal.availability_start_date ? new Date(currentListingDataGlobal.availability_start_date + 'T00:00:00Z').toLocaleDateString(currentLangForDate === 'it' ? 'it-IT' : 'en-GB', dateOptions) : "N/D";
+                if(endDateEl) endDateEl.textContent = currentListingDataGlobal.availability_end_date ? new Date(currentListingDataGlobal.availability_end_date + 'T00:00:00Z').toLocaleDateString(currentLangForDate === 'it' ? 'it-IT' : 'en-GB', dateOptions) : (translations[currentLangForDate]?.notSpecified || "Non specificato");
+
+                const thumbnailContainer = document.getElementById('thumbnailContainer');
+                thumbnailContainer.innerHTML = '';
+                const thumbnails = currentListingDataGlobal.thumbnails || [];
+                const displayThumbnails = thumbnails.length > 0 ? thumbnails : (currentListingDataGlobal.image_url ? [currentListingDataGlobal.image_url] : []); 
+                
+                displayThumbnails.slice(0, 4).forEach((thumbSrc, index) => {
+                    const img = document.createElement('img');
+                    img.src = thumbSrc; img.alt = `Thumbnail ${index + 1}`;
+                    img.className = 'w-full rounded-lg shadow-sm gallery-image cursor-pointer hover:opacity-80 transition';
+                    img.onclick = () => changeMainImage(thumbSrc); thumbnailContainer.appendChild(img);
+                });
+
+                const featuresUl = document.getElementById('listing-features'); featuresUl.innerHTML = '';
+                (currentListingDataGlobal.features || [translations[currentLangForDate]?.noFeaturesSpecified || "Nessuna caratteristica specificata."]).forEach(f => {
+                    const li = document.createElement('li'); li.className = 'flex items-center';
+                    li.innerHTML = `<svg class="h-5 w-5 mr-2 text-indigo-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg> ${f}`;
+                    featuresUl.appendChild(li);
+                });
+                document.getElementById('host-name').textContent = currentListingDataGlobal.owner_name || "Proprietario Sconosciuto";
+                updateContactButtonUIVisibility();
+                setLanguage(localStorage.getItem('erasmusHousingLang') || 'it'); 
+            } catch (error) {
+                console.error("Errore dettagli annuncio:", error);
+                listingDataContainer.classList.add('hidden');
+                listingErrorEl.textContent = `Impossibile caricare: ${error.message}`;
+                listingErrorEl.classList.remove('hidden');
+            }
+        }
+        
+        function updateContactButtonUIVisibility() {
+            const contactBtn = document.getElementById('contactOwnerBtn');
+            const loginMsg = document.getElementById('loginToContactMsg');
+            if (!contactBtn || !loginMsg) return; 
+            const currentLang = localStorage.getItem('erasmusHousingLang') || 'it';
+
+            if (currentUserIdGlobal && currentListingDataGlobal && currentListingDataGlobal.owner_id !== currentUserIdGlobal) {
+                contactBtn.classList.remove('hidden'); loginMsg.classList.add('hidden');
+            } else if (currentListingDataGlobal && currentListingDataGlobal.owner_id === currentUserIdGlobal) {
+                contactBtn.classList.add('hidden'); 
+                loginMsg.textContent = translations[currentLang]?.thisIsYourAd || "Questo è un tuo annuncio."; 
+                loginMsg.classList.remove('hidden');
+            } else {
+                contactBtn.classList.add('hidden'); 
+                loginMsg.innerHTML = `<a href="login.html?redirect=${encodeURIComponent(window.location.href)}" class="text-indigo-600 hover:underline font-semibold" data-translate-key="loginToContactLink">Accedi</a> <span data-translate-key="loginToContactText">per contattare.</span>`; 
+                loginMsg.classList.remove('hidden');
+                // Riapplica traduzione al messaggio di login se necessario
+                const loginLinkInMsg = loginMsg.querySelector('a');
+                const loginTextInMsg = loginMsg.querySelector('span');
+                if(loginLinkInMsg) loginLinkInMsg.textContent = translations[currentLang]?.loginToContactLink || "Accedi";
+                if(loginTextInMsg) loginTextInMsg.textContent = translations[currentLang]?.loginToContactText || " per contattare.";
+            }
+        }
+        
+        document.getElementById('contactOwnerBtn')?.addEventListener('click', () => {
+            if (!currentUserIdGlobal) { window.location.href = `login.html?redirect=${encodeURIComponent(window.location.href)}`; return; }
+            if (currentListingDataGlobal && currentListingDataGlobal.owner_id && currentListingDataGlobal.id) {
+                window.location.href = `messages.html?start_conversation_with=${currentListingDataGlobal.owner_id}&listing_id=${currentListingDataGlobal.id}`;
+            } else { alert("Impossibile contattare: info proprietario o annuncio mancanti."); }
+        });
+
+        // --- Navbar Dinamica e Logica Lingua (Standardizzata) ---
+        const navLoginLinkDesktop = document.getElementById('navLoginLinkDesktop');
+        const navUserProfileDesktop = document.getElementById('navUserProfileDesktop');
+        const navUserNameDesktop = document.getElementById('navUserNameDesktop');
+        const navUserPicDesktop = document.getElementById('navUserPicDesktop');
+        const navLogoutBtnDesktop = document.getElementById('navLogoutBtnDesktop');
+        const navMessagesLinkDesktop = document.getElementById('navMessagesLinkDesktop');
+        const navAddListingLinkDesktop = document.getElementById('navAddListingLinkDesktop');
+        const navLoginLinkMobile = document.getElementById('navLoginLinkMobile');
+        const navUserProfileMobile = document.getElementById('navUserProfileMobile');
+        const navUserNameMobile = document.getElementById('navUserNameMobile');
+        const navUserPicMobile = document.getElementById('navUserPicMobile');
+        const navLogoutBtnMobile = document.getElementById('navLogoutBtnMobile');
+        const navMessagesLinkMobile = document.getElementById('navMessagesLinkMobile');
+        const navAddListingLinkMobile = document.getElementById('navAddListingLinkMobile');
+        const footerAddListingLink = document.getElementById('footerAddListingLink'); 
+
+        const translations = { 
+            it: {
+                pageTitleListingDetail: "Dettaglio Alloggio - Erasmus Housing",
+                navHome: "Home", navListings: "Annunci", navMessages: "Messaggi", navAddListing: "Pubblica Annuncio", navLogin: "Login", navLogout: "Logout",
+                loadingText: "Caricamento...",
+                descriptionTitle: "Descrizione",
+                availabilityDatesTitle: "Date Disponibilità",
+                availabilityFrom: "Da:",
+                availabilityTo: "A:",
+                notSpecified: "Non specificato",
+                featuresTitle: "Caratteristiche",
+                noFeaturesSpecified: "Nessuna caratteristica specificata.",
+                mapLocationTitle: "Posizione sulla Mappa",
+                mapPlaceholder: "Mappa (placeholder)",
+                pricePerMonth: "/mese",
+                contactOwnerButton: "Contatta il Proprietario",
+                loginToContactLink: "Accedi",
+                loginToContactText: " per contattare.",
+                thisIsYourAd: "Questo è un tuo annuncio.",
+                saveToFavoritesButton: "Salva nei Preferiti",
+                landlordInfoTitle: "Informazioni sul Locatore",
+                landlordRole: "Proprietario/a",
+                memberSince: "Membro da:",
+                houseRulesTitle: "Regole della Casa",
+                noRulesSpecified: "Nessuna regola specificata.",
+                footerErasmusHousing: "ErasmusHousing", footerDescription: "La tua piattaforma per alloggi Erasmus.", footerUsefulLinks: "Link Utili", footerAboutUs: "Chi Siamo", footerSearchListings: "Cerca Annunci", footerAddListing: "Pubblica Annuncio", footerContactUs: "Contattaci", footerContactUsInline: "Contatti", footerAllRightsReserved: "Tutti i diritti riservati."
+            },
+            en: {
+                pageTitleListingDetail: "Listing Detail - Erasmus Housing",
+                navHome: "Home", navListings: "Listings", navMessages: "Messages", navAddListing: "Post Ad", navLogin: "Login", navLogout: "Logout",
+                loadingText: "Loading...",
+                descriptionTitle: "Description",
+                availabilityDatesTitle: "Availability Dates",
+                availabilityFrom: "From:",
+                availabilityTo: "To:",
+                notSpecified: "Not specified",
+                featuresTitle: "Features",
+                noFeaturesSpecified: "No features specified.",
+                mapLocationTitle: "Map Location",
+                mapPlaceholder: "Map (placeholder)",
+                pricePerMonth: "/month",
+                contactOwnerButton: "Contact Owner",
+                loginToContactLink: "Login",
+                loginToContactText: " to contact.",
+                thisIsYourAd: "This is your ad.",
+                saveToFavoritesButton: "Save to Favorites",
+                landlordInfoTitle: "Landlord Information",
+                landlordRole: "Landlord",
+                memberSince: "Member since:",
+                houseRulesTitle: "House Rules",
+                noRulesSpecified: "No rules specified.",
+                footerErasmusHousing: "ErasmusHousing", footerDescription: "Your platform for Erasmus housing.", footerUsefulLinks: "Useful Links", footerAboutUs: "About Us", footerSearchListings: "Search Listings", footerAddListing: "Post Ad", footerContactUs: "Contact Us", footerContactUsInline: "Contact", footerAllRightsReserved: "All rights reserved."
+            }
+        };
+
+        function setLanguage(lang) {
+            localStorage.setItem('erasmusHousingLang', lang);
+            document.documentElement.lang = lang; 
+            document.querySelectorAll('[data-translate-key]').forEach(element => {
+                const key = element.getAttribute('data-translate-key');
+                if (translations[lang] && translations[lang][key]) {
+                    if (element.tagName === 'INPUT' && element.placeholder) { element.placeholder = translations[lang][key]; }
+                    else if (element.tagName === 'TITLE') { document.title = translations[lang][key]; }
+                    else { element.textContent = translations[lang][key]; }
+                }
+            });
+            const langItButton = document.getElementById('lang-it');
+            const langEnButton = document.getElementById('lang-en');
+            if (langItButton) langItButton.classList.toggle('active', lang === 'it');
+            if (langEnButton) langEnButton.classList.toggle('active', lang === 'en');
+        }
+        
+        const langItButton = document.getElementById('lang-it');
+        const langEnButton = document.getElementById('lang-en');
+        if (langItButton) langItButton.addEventListener('click', (e) => { e.preventDefault(); setLanguage('it'); loadListingDetailsPage(); }); // Ricarica dettagli per date tradotte
+        if (langEnButton) langEnButton.addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); loadListingDetailsPage(); }); // Ricarica dettagli per date tradotte
+
+        async function updateNavbarUI() { /* ... (Copia la funzione updateNavbarUI completa da index.html) ... */ }
+        function setupLogoutButtons() { /* ... (Copia la funzione setupLogoutButtons completa da index.html) ... */ }
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuIconOpen = document.getElementById('menuIconOpen');
+        const menuIconClose = document.getElementById('menuIconClose');
+        if (mobileMenuButton && mobileMenu && menuIconOpen && menuIconClose) { /* ... (Logica toggle menu mobile come in index.html) ... */ }
+        
+        document.addEventListener('DOMContentLoaded', () => { 
+            const preferredLang = localStorage.getItem('erasmusHousingLang') || 'it';
+            if (mobileMenu && menuIconOpen && menuIconClose) {
+                mobileMenu.classList.remove('open');
+                mobileMenu.style.maxHeight = '0px';
+                mobileMenu.style.opacity = '0';
+                mobileMenu.classList.add('hidden'); 
+                                            
+                menuIconOpen.classList.remove('hidden');
+                menuIconClose.classList.add('hidden');
+            }
+            // setLanguage(preferredLang); // Spostato dopo il caricamento dei dati per le date
+            updateNavbarUI().then(() => { 
+                loadListingDetailsPage(); // Questo ora chiamerà setLanguage al suo interno dopo aver caricato i dati
+            });
+            setupLogoutButtons();
+        });
+    </script>
+</body>
+</html>

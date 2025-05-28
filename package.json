@@ -1,0 +1,22 @@
+{
+  "name": "erasmushousing",
+  "version": "1.0.0",
+  "description": "Il tuo progetto ErasmusHousing",
+  "scripts": {
+    "dev": "npm run watch:css",
+    "build:css": "npx @tailwindcss/cli -i ./src/input.css -o ./static/css/output.css --minify",
+    "watch:css": "npx @tailwindcss/cli -i ./src/input.css -o ./static/css/output.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.8",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.8"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3"
+  }
+}

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="pageTitleLogin">Accesso / Registrazione - Erasmus Housing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
+        .main-content-login { 
+            flex-grow: 1; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            background-image: url('/images/sfondo_home_page_ragazzi_edifici.png'); /* SFONDO RICHIESTO */
+            background-size:cover; 
+            background-position:center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .form-container { background-color: rgba(255, 255, 255, 0.97); backdrop-filter: blur(5px); }
+        #mobileMenu { transition: max-height 0.3s ease-out, opacity 0.3s ease-out; max-height: 0; opacity:0; overflow: hidden; }
+        #mobileMenu.open { max-height: 500px; opacity: 1; }
+        .language-switcher button { padding: 0.25rem 0.5rem; margin-left: 0.25rem; border-radius: 0.25rem; border: 1px solid transparent;}
+        .language-switcher button.active { background-color: #4f46e5; color: white; border-color: #4f46e5;}
+        .language-switcher button:not(.active):hover { background-color: #e0e7ff; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800"> 
+
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <a href="index.html" class="text-2xl font-bold text-indigo-600 mr-2 sm:mr-4">ErasmusHousing</a>
+                <div class="language-switcher text-xs flex">
+                    <button id="lang-it" data-lang="it" class="border-gray-300">IT</button>
+                    <button id="lang-en" data-lang="en" class="border-gray-300">EN</button>
+                </div>
+            </div>
+            <div class="md:hidden">
+                <button id="mobileMenuButton" aria-label="Apri menu" class="text-gray-700 focus:outline-none">
+                    <svg id="menuIconOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    <svg id="menuIconClose" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div id="navLinksDesktop" class="hidden md:flex space-x-3 lg:space-x-4 items-center text-sm lg:text-base">
+                <a href="index.html" data-translate-key="navHome" class="text-gray-600 hover:text-indigo-600 px-2 py-1">Home</a>
+                <a href="listings.html" data-translate-key="navListings" class="text-gray-600 hover:text-indigo-600 px-2 py-1">Annunci</a>
+                <a href="messages.html" id="navMessagesLinkDesktop" data-translate-key="navMessages" class="text-gray-600 hover:text-indigo-600 px-2 py-1 hidden">Messaggi</a>
+                <a href="add-listing.html" id="navAddListingLinkDesktop" data-translate-key="navAddListing" class="text-gray-600 hover:text-indigo-600 px-2 py-1">Pubblica Annuncio</a>
+                <a href="login.html" id="navLoginLinkDesktop" data-translate-key="navLogin" class="text-indigo-600 font-semibold px-2 py-1">Login</a>
+                <div id="navUserProfileDesktop" class="hidden inline-flex items-center">
+                    <img id="navUserPicDesktop" src="https://placehold.co/40x40/A0AEC0/FFFFFF?text=U" alt="User" class="w-8 h-8 rounded-full mr-2 hidden object-cover">
+                    <span id="navUserNameDesktop" class="text-gray-700 mr-2 text-sm font-medium"></span>
+                    <button id="navLogoutBtnDesktop" data-translate-key="navLogout" class="bg-red-500 text-white px-2.5 py-1 rounded-md hover:bg-red-600 text-xs">Logout</button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobileMenu" class="md:hidden bg-white shadow-lg absolute top-full left-0 right-0 z-30">
+            <a href="index.html" data-translate-key="navHome" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 border-b border-gray-100">Home</a>
+            <a href="listings.html" data-translate-key="navListings" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 border-b border-gray-100">Annunci</a>
+            <a href="messages.html" id="navMessagesLinkMobile" data-translate-key="navMessages" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 border-b border-gray-100 hidden">Messaggi</a>
+            <a href="add-listing.html" id="navAddListingLinkMobile" data-translate-key="navAddListing" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 border-b border-gray-100">Pubblica Annuncio</a>
+            <div class="px-4 py-3 mt-2 border-t border-gray-200">
+                <a href="login.html" id="navLoginLinkMobile" data-translate-key="navLogin" class="block text-center w-full bg-indigo-600 text-white px-4 py-2.5 rounded-md hover:bg-indigo-700 mb-2">Login</a>
+                <div id="navUserProfileMobile" class="hidden text-center">
+                    <img id="navUserPicMobile" src="https://placehold.co/40x40/A0AEC0/FFFFFF?text=U" alt="User" class="w-10 h-10 rounded-full mx-auto mb-2 hidden object-cover">
+                    <span id="navUserNameMobile" class="block text-gray-700 mb-2 font-medium"></span>
+                    <button id="navLogoutBtnMobile" data-translate-key="navLogout" class="w-full bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content-login py-8 sm:py-12 px-4">
+        <div class="w-full max-w-md">
+            <div id="loginEmailFormContainer" class="form-container p-6 sm:p-8 md:p-10 rounded-xl shadow-2xl">
+                 <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center" data-translate-key="loginTitle">Accedi</h1>
+                <form id="loginEmailForm" class="space-y-4 sm:space-y-6">
+                    <div><label for="login-email" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="emailLabel">Email</label><input type="email" id="login-email" name="email" required autocomplete="email" class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" data-translate-key="emailPlaceholder" placeholder="tuamail@esempio.com"></div>
+                    <div>
+                        <div class="flex justify-between items-baseline mb-1"><label for="login-password" class="block text-sm font-medium text-gray-700" data-translate-key="passwordLabel">Password</label><a href="#" id="forgotPasswordLink" class="text-xs sm:text-sm text-indigo-600 hover:underline" data-translate-key="forgotPasswordLink">Password dimenticata?</a></div>
+                        <input type="password" id="login-password" name="password" required autocomplete="current-password" class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="••••••••">
+                    </div>
+                    <div><button type="submit" class="w-full bg-indigo-600 text-white px-4 py-2 sm:py-2.5 rounded-md hover:bg-indigo-700 font-semibold text-sm sm:text-base" data-translate-key="loginWithEmailButton">Accedi con Email</button></div>
+                </form>
+                <div id="loginEmailMessage" class="mt-4 text-center text-sm"></div>
+                <div class="mt-4 sm:mt-6 pt-4 border-t border-gray-200">
+                    <p class="text-center text-xs sm:text-sm text-gray-500 mb-3" data-translate-key="orLoginWith">Oppure accedi con:</p>
+                    <div class="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-3">
+                        <button id="loginGoogleBtn" type="button" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-xs sm:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"><img class="h-5 w-5 mr-2" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google icon"> Google</button>
+                        <button id="loginFacebookBtn" type="button" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-xs sm:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"><svg class="w-5 h-5 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M20 10c0-5.523-4.477-10-10-10S0 4.477 0 10c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V10h2.54V7.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V10h2.773l-.443 2.89h-2.33v6.988C16.343 19.128 20 14.991 20 10z" clip-rule="evenodd"></path></svg>Facebook</button>
+                    </div>
+                </div>
+                <p class="mt-6 sm:mt-8 text-center text-xs sm:text-sm text-gray-600" data-translate-key="noAccountPrompt">Non hai un account? <a href="#" id="showRegisterEmailForm" class="font-medium text-indigo-600 hover:underline" data-translate-key="registerNowLink">Registrati con la tua email</a></p>
+            </div>
+
+            <div id="registerEmailFormContainer" class="form-container p-6 sm:p-8 md:p-10 rounded-xl shadow-2xl hidden">
+                 <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center" data-translate-key="createAccountTitle">Crea un Account</h1>
+                <form id="registerEmailForm" class="space-y-4 sm:space-y-6">
+                    <div><label for="register-name" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="fullNameLabel">Nome Completo</label><input type="text" id="register-name" name="name" required class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Mario Rossi"></div>
+                    <div><label for="register-email" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="emailLabel">Email</label><input type="email" id="register-email" name="email" required autocomplete="email" class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" data-translate-key="emailPlaceholder" placeholder="tuamail@esempio.com"></div>
+                    <div><label for="register-password" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="passwordLabel">Password</label><input type="password" id="register-password" name="password" required autocomplete="new-password" class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" data-translate-key="passwordMinCharPlaceholder" placeholder="Min. 8 caratteri"></div>
+                    <div><label for="register-confirm-password" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="confirmPasswordLabel">Conferma Password</label><input type="password" id="register-confirm-password" name="confirm_password" required class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="••••••••"></div>
+                    <div><button type="submit" class="w-full bg-green-600 text-white px-4 py-2 sm:py-2.5 rounded-md hover:bg-green-700 font-semibold text-sm sm:text-base" data-translate-key="registerWithEmailButton">Registrati con Email</button></div>
+                </form>
+                <div id="registerEmailMessage" class="mt-4 text-center text-sm"></div>
+                <p class="mt-6 sm:mt-8 text-center text-xs sm:text-sm text-gray-600" data-translate-key="alreadyAccountPrompt">Hai già un account? <a href="#" id="showLoginEmailForm" class="font-medium text-indigo-600 hover:underline" data-translate-key="loginLink">Accedi</a></p>
+            </div>
+            
+            <div id="verifyEmailFormContainer" class="form-container p-6 sm:p-8 md:p-10 rounded-xl shadow-2xl hidden">
+                <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 text-center" data-translate-key="verifyEmailTitle">Verifica la tua Email</h1>
+                <p class="text-gray-600 text-sm mb-6 text-center" data-translate-key="codeSentTo">Abbiamo inviato un codice a <strong id="verificationEmailDisplay"></strong>.</p>
+                <form id="verifyEmailForm" class="space-y-4 sm:space-y-6"><input type="hidden" id="verify-email-hidden" name="email">
+                    <div><label for="verification-code" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="verificationCodeLabel">Codice di Verifica</label><input type="text" id="verification-code" name="code" required maxlength="6" class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-center text-base sm:text-lg tracking-widest" placeholder="123456"></div>
+                    <div><button type="submit" class="w-full bg-indigo-600 text-white px-4 py-2 sm:py-2.5 rounded-md hover:bg-indigo-700 font-semibold text-sm sm:text-base" data-translate-key="verifyAndLoginButton">Verifica e Accedi</button></div>
+                </form>
+                <div id="verifyEmailMessage" class="mt-4 text-center text-sm"></div>
+                <p class="mt-6 text-center text-xs sm:text-sm text-gray-600" data-translate-key="didNotReceiveCode">Non hai ricevuto il codice? <button id="resendVerificationCodeBtn" class="font-medium text-indigo-600 hover:underline" data-translate-key="resendCodeLink">Reinvia</button><span id="resendCooldown" class="hidden text-gray-500 ml-1"></span></p>
+                <p class="mt-2 text-center text-xs sm:text-sm text-gray-600"><a href="#" id="backToLoginFromVerify" class="font-medium text-indigo-600 hover:underline" data-translate-key="backToLoginLink">Torna al Login</a></p>
+            </div>
+        </div>
+    </main>
+
+    <footer id="contact" class="bg-gray-800 text-white py-10 md:py-12 mt-auto">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                <div><h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4" data-translate-key="footerErasmusHousing">ErasmusHousing</h3><p class="text-sm text-gray-400" data-translate-key="footerDescription">La tua piattaforma per alloggi Erasmus.</p></div>
+                <div><h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4" data-translate-key="footerUsefulLinks">Link Utili</h3><ul class="space-y-1.5 sm:space-y-2"><li class="text-sm"><a href="index.html#contact" data-translate-key="footerContactUsInline" class="text-gray-400 hover:text-white">Contatti</a></li><li class="text-sm"><a href="listings.html" data-translate-key="footerSearchListings" class="text-gray-400 hover:text-white">Cerca Annunci</a></li><li class="text-sm"><a href="add-listing.html" id="footerAddListingLink" data-translate-key="footerAddListing" class="text-gray-400 hover:text-white">Pubblica Annuncio</a></li></ul></div>
+                <div>
+                    <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4" data-translate-key="footerContactUs">Contattaci</h3>
+                    <p class="text-sm text-gray-400">Email: info@erasmus-housing.com</p>
+                    <div class="flex space-x-4 mt-4 justify-center md:justify-start">
+                        <a href="https://www.instagram.com/erasmushousing/?utm_source=ig_web_button_share_sheet" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white" aria-label="Instagram">
+                          <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6"> {/* Nota: rimosso fill="currentColor" e viewBox modificato se necessario */}
+                              <defs>
+                                  <radialGradient id="instaGradient" gradientUnits="userSpaceOnUse" cx="19.38" cy="42.035" r="44.899">
+                                      <stop offset="0" stop-color="#fd5"/>
+                                      <stop offset=".328" stop-color="#ff543f"/>
+                                      <stop offset=".348" stop-color="#fc5245"/>
+                                      <stop offset=".504" stop-color="#e64771"/>
+                                      <stop offset=".643" stop-color="#d53e91"/>
+                                      <stop offset=".761" stop-color="#cc39a4"/>
+                                      <stop offset=".841" stop-color="#c837ab"/>
+                                  </radialGradient>
+                              </defs>
+                              <path fill="url(#instaGradient)" d="M34.017,41.99l-20,0.019c-4.4,0.004-8.003-3.592-8.008-7.992l-0.019-20	c-0.004-4.4,3.592-8.003,7.992-8.008l20-0.019c4.4-0.004,8.003,3.592,8.008,7.992l0.019,20	C42.014,38.383,38.417,41.986,34.017,41.99z"/>
+                              <path fill="#fff" d="M24,31c-3.859,0-7-3.141-7-7s3.141-7,7-7s7,3.141,7,7S27.859,31,24,31z M24,19c-2.757,0-5,2.243-5,5	s2.243,5,5,5s5-2.243,5-5S26.757,19,24,19z"/>
+                              <circle cx="31.5" cy="16.5" r="1.5" fill="#fff"/>
+                          </svg>
+                      </a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 border-t border-gray-700 pt-8 text-center text-gray-500 text-sm"><p>&copy; <span id="currentYearLogin"></span> ErasmusHousing. <span data-translate-key="footerAllRightsReserved">Tutti i diritti riservati.</span></p></div>
+        </div>
+    </footer>
+
+    <script>
+        // IMPORTANTE: Sostituisci 'IL_TUO_URL_RENDER_QUI' con l'URL effettivo del tuo servizio Render.
+        const API_BASE_URL = 'https://erasmushousing.onrender.com'; 
+        
+        document.getElementById('currentYearLogin').textContent = new Date().getFullYear();
+        const loginEmailFormContainer = document.getElementById('loginEmailFormContainer');
+        const registerEmailFormContainer = document.getElementById('registerEmailFormContainer');
+        const verifyEmailFormContainer = document.getElementById('verifyEmailFormContainer');
+        const loginEmailForm = document.getElementById('loginEmailForm');
+        const registerEmailForm = document.getElementById('registerEmailForm');
+        const verifyEmailForm = document.getElementById('verifyEmailForm');
+        const loginEmailMessage = document.getElementById('loginEmailMessage');
+        const registerEmailMessage = document.getElementById('registerEmailMessage');
+        const verifyEmailMessage = document.getElementById('verifyEmailMessage');
+        const verificationEmailDisplay = document.getElementById('verificationEmailDisplay');
+        const verifyEmailHiddenInput = document.getElementById('verify-email-hidden');
+        const resendVerificationCodeBtn = document.getElementById('resendVerificationCodeBtn');
+        const resendCooldownSpan = document.getElementById('resendCooldown');
+        let resendTimer;
+
+        function showForm(formToShow) {
+            [loginEmailFormContainer, registerEmailFormContainer, verifyEmailFormContainer].forEach(c => { if(c) c.classList.add('hidden');});
+            if (formToShow) formToShow.classList.remove('hidden');
+        }
+        
+        // --- Navbar Dinamica e Logica Lingua (Standardizzata) ---
+        const navLoginLinkDesktop = document.getElementById('navLoginLinkDesktop');
+        const navUserProfileDesktop = document.getElementById('navUserProfileDesktop');
+        const navUserNameDesktop = document.getElementById('navUserNameDesktop');
+        const navUserPicDesktop = document.getElementById('navUserPicDesktop');
+        const navLogoutBtnDesktop = document.getElementById('navLogoutBtnDesktop');
+        const navMessagesLinkDesktop = document.getElementById('navMessagesLinkDesktop');
+        const navAddListingLinkDesktop = document.getElementById('navAddListingLinkDesktop');
+        const navLoginLinkMobile = document.getElementById('navLoginLinkMobile');
+        const navUserProfileMobile = document.getElementById('navUserProfileMobile');
+        const navUserNameMobile = document.getElementById('navUserNameMobile');
+        const navUserPicMobile = document.getElementById('navUserPicMobile');
+        const navLogoutBtnMobile = document.getElementById('navLogoutBtnMobile');
+        const navMessagesLinkMobile = document.getElementById('navMessagesLinkMobile');
+        const navAddListingLinkMobile = document.getElementById('navAddListingLinkMobile');
+        const footerAddListingLink = document.getElementById('footerAddListingLink'); 
+        const ctaAddListingLink = null;    
+
+        const translations = { 
+            it: {
+                pageTitleLogin: "Accesso / Registrazione - Erasmus Housing",
+                navHome: "Home", navListings: "Annunci", navMessages: "Messaggi", navAddListing: "Pubblica Annuncio", navLogin: "Login", navLogout: "Logout",
+                loginTitle: "Accedi", emailLabel: "Email", emailPlaceholder: "tuamail@esempio.com", passwordLabel: "Password", forgotPasswordLink: "Password dimenticata?", loginWithEmailButton: "Accedi con Email",
+                orLoginWith: "Oppure accedi con:", noAccountPrompt: "Non hai un account?", registerNowLink: "Registrati con la tua email",
+                createAccountTitle: "Crea un Account", fullNameLabel: "Nome Completo", passwordMinCharPlaceholder: "Min. 8 caratteri", confirmPasswordLabel: "Conferma Password", registerWithEmailButton: "Registrati con Email",
+                alreadyAccountPrompt: "Hai già un account?", loginLink: "Accedi",
+                verifyEmailTitle: "Verifica la tua Email", codeSentTo: "Abbiamo inviato un codice a ", verificationCodeLabel: "Codice di Verifica", verifyAndLoginButton: "Verifica e Accedi",
+                didNotReceiveCode: "Non hai ricevuto il codice?", resendCodeLink: "Reinvia", backToLoginLink: "Torna al Login",
+                footerErasmusHousing: "ErasmusHousing", footerDescription: "La tua piattaforma per alloggi Erasmus.", footerUsefulLinks: "Link Utili", footerContactUsInline: "Contatti", footerSearchListings: "Cerca Annunci", footerAddListing: "Pubblica Annuncio", footerContactUs: "Contattaci", footerAllRightsReserved: "Tutti i diritti riservati."
+            },
+            en: {
+                pageTitleLogin: "Login / Register - Erasmus Housing",
+                navHome: "Home", navListings: "Listings", navMessages: "Messages", navAddListing: "Post Ad", navLogin: "Login", navLogout: "Logout",
+                loginTitle: "Login", emailLabel: "Email", emailPlaceholder: "yourmail@example.com", passwordLabel: "Password", forgotPasswordLink: "Forgot password?", loginWithEmailButton: "Login with Email",
+                orLoginWith: "Or login with:", noAccountPrompt: "Don't have an account?", registerNowLink: "Register with your email",
+                createAccountTitle: "Create an Account", fullNameLabel: "Full Name", passwordMinCharPlaceholder: "Min. 8 characters", confirmPasswordLabel: "Confirm Password", registerWithEmailButton: "Register with Email",
+                alreadyAccountPrompt: "Already have an account?", loginLink: "Login",
+                verifyEmailTitle: "Verify Your Email", codeSentTo: "We sent a code to ", verificationCodeLabel: "Verification Code", verifyAndLoginButton: "Verify and Login",
+                didNotReceiveCode: "Didn't receive the code?", resendCodeLink: "Resend", backToLoginLink: "Back to Login",
+                footerErasmusHousing: "ErasmusHousing", footerDescription: "Your platform for Erasmus housing.", footerUsefulLinks: "Useful Links", footerContactUsInline: "Contact", footerSearchListings: "Search Listings", footerAddListing: "Post Ad", footerContactUs: "Contact Us", footerAllRightsReserved: "All rights reserved."
+            }
+        };
+
+        function setLanguage(lang) {
+            localStorage.setItem('erasmusHousingLang', lang); 
+            document.documentElement.lang = lang;
+            document.querySelectorAll('[data-translate-key]').forEach(element => {
+                const key = element.getAttribute('data-translate-key');
+                if (translations[lang] && translations[lang][key]) {
+                    if (element.tagName === 'INPUT' && element.placeholder) { element.placeholder = translations[lang][key]; }
+                    else if (element.tagName === 'TITLE') { document.title = translations[lang][key]; }
+                    else { element.textContent = translations[lang][key]; }
+                }
+            });
+            const langItButton = document.getElementById('lang-it');
+            const langEnButton = document.getElementById('lang-en');
+            if (langItButton) langItButton.classList.toggle('active', lang === 'it');
+            if (langEnButton) langEnButton.classList.toggle('active', lang === 'en');
+        }
+        
+        const langItButton = document.getElementById('lang-it');
+        const langEnButton = document.getElementById('lang-en');
+        if (langItButton) langItButton.addEventListener('click', (e) => { e.preventDefault(); setLanguage('it'); });
+        if (langEnButton) langEnButton.addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
+
+        async function updateNavbarUI() {
+            let isLoggedIn = false; let userData = null;
+            if (API_BASE_URL === 'IL_TUO_URL_RENDER_QUI' && !window.location.href.startsWith('file://')) { console.warn("API_BASE_URL non configurato."); }
+            else if (API_BASE_URL !== 'IL_TUO_URL_RENDER_QUI' || window.location.href.startsWith('file://')) {
+                try { const response = await fetch(`${API_BASE_URL}/api/auth/status`); const data = await response.json(); if (data.logged_in && data.user) { isLoggedIn = true; userData = data.user; }}
+                catch (error) { console.error("Errore fetch /api/auth/status:", error); }
+            }
+
+            const updateElements = (loginLink, userProfile, userName, userPic, messagesLink, addListingLink) => {
+                if (loginLink) { isLoggedIn ? loginLink.classList.add('hidden') : loginLink.classList.remove('hidden'); }
+                if (userProfile) { isLoggedIn ? userProfile.classList.remove('hidden') : userProfile.classList.add('hidden'); }
+                if (isLoggedIn && userData) {
+                    if (userName) userName.textContent = userData.name || userData.email;
+                    if (userPic) { userPic.src = userData.profile_pic || 'https://placehold.co/40x40/A0AEC0/FFFFFF?text=U'; userPic.classList.remove('hidden');}
+                    if (messagesLink) messagesLink.classList.remove('hidden');
+                } else {
+                    if (userPic) userPic.classList.add('hidden');
+                    if (messagesLink) messagesLink.classList.add('hidden');
+                }
+                const addListingTargetUrl = 'add-listing.html'; const loginRedirectForAddListing = `login.html?redirect=${encodeURIComponent(addListingTargetUrl)}`;
+                if (addListingLink) { addListingLink.href = isLoggedIn ? addListingTargetUrl : loginRedirectForAddListing; }
+            };
+            updateElements(navLoginLinkDesktop, navUserProfileDesktop, navUserNameDesktop, navUserPicDesktop, navMessagesLinkDesktop, navAddListingLinkDesktop);
+            updateElements(navLoginLinkMobile, navUserProfileMobile, navUserNameMobile, navUserPicMobile, navMessagesLinkMobile, navAddListingLinkMobile);
+            
+            if (isLoggedIn && (window.location.pathname.endsWith('/login.html') || window.location.pathname.endsWith('/login'))) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirectTarget = urlParams.get('redirect');
+                if (!urlParams.has('oauth_message') && !urlParams.has('oauth_error') && !urlParams.has('verification_email')) {
+                    window.location.href = redirectTarget ? decodeURIComponent(redirectTarget) : 'index.html';
+                }
+            }
+            if(footerAddListingLink) footerAddListingLink.href = isLoggedIn ? 'add-listing.html' : `login.html?redirect=${encodeURIComponent('add-listing.html')}`;
+        }
+        function setupLogoutButtons() {
+            const handleLogout = async () => {
+                if (API_BASE_URL === 'IL_TUO_URL_RENDER_QUI' && !window.location.href.startsWith('file://')) { alert("Configurazione API non completata."); return; }
+                try { const resp = await fetch(`${API_BASE_URL}/api/auth/logout`, { method: 'POST' }); 
+                      if (resp.ok) { 
+                          await updateNavbarUI(); 
+                          showForm(loginEmailFormContainer); 
+                      } else { console.error("Logout fallito"); }}
+                catch (err) { console.error("Errore logout:", err); }
+            };
+            if (navLogoutBtnDesktop) navLogoutBtnDesktop.addEventListener('click', handleLogout);
+            if (navLogoutBtnMobile) navLogoutBtnMobile.addEventListener('click', handleLogout);
+        }
+        function displayMessage(el, msg, isError = false) { if(el) { el.textContent = msg; el.className = `mt-4 text-center text-sm ${isError ? 'text-red-600' : 'text-green-600'}`;}}
+        
+        async function apiCall(endpoint, method = 'POST', body = null) {
+            if (API_BASE_URL === 'IL_TUO_URL_RENDER_QUI' && !window.location.href.startsWith('file://')) { 
+                return { ok: false, status: 0, data: { error: "L'URL dell'API non è configurato." } };
+            }
+            try {
+                const opts = { method, headers: {'Content-Type': 'application/json'} }; if (body) opts.body = JSON.stringify(body);
+                const resp = await fetch(`${API_BASE_URL}${endpoint}`, opts); const data = await resp.json();
+                return { ok: resp.ok, status: resp.status, data };
+            } catch (err) { 
+                console.error(`API call error ${endpoint}:`, err); 
+                return { ok: false, status: 0, data: { error: "Errore di connessione o risposta non JSON." } }; 
+            }
+        }
+
+        if (loginEmailForm) {
+            loginEmailForm.addEventListener('submit', async (e) => {
+                e.preventDefault(); const data = Object.fromEntries(new FormData(loginEmailForm).entries());
+                const result = await apiCall('/api/auth/login/email', 'POST', data);
+                if (result.ok) { 
+                    displayMessage(loginEmailMessage, result.data.message || "Login effettuato!"); 
+                    await updateNavbarUI(); 
+                } else { 
+                    if (result.data && result.data.unverified_account && result.data.email) {
+                        displayMessage(loginEmailMessage, result.data.error, true);
+                    } else { 
+                        displayMessage(loginEmailMessage, result.data.error || "Login fallito. Controlla le tue credenziali.", true); 
+                    }
+                }
+            });
+        }
+        if (registerEmailForm) {
+            registerEmailForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const pwd = document.getElementById('register-password').value; 
+                const confPwd = document.getElementById('register-confirm-password').value;
+                if (pwd !== confPwd) { displayMessage(registerEmailMessage, "Le password non coincidono.", true); return; }
+                if (pwd.length < 8) { displayMessage(registerEmailMessage, "La password deve essere di almeno 8 caratteri.", true); return; }
+                const data = Object.fromEntries(new FormData(registerEmailForm).entries()); delete data.confirm_password;
+                const result = await apiCall('/api/auth/register/email', 'POST', data);
+                if (result.ok) { 
+                    displayMessage(registerEmailMessage, result.data.message); 
+                    if(verificationEmailDisplay) verificationEmailDisplay.textContent = result.data.email; 
+                    if(verifyEmailHiddenInput) verifyEmailHiddenInput.value = result.data.email; 
+                    showForm(verifyEmailFormContainer); 
+                } else { 
+                    displayMessage(registerEmailMessage, result.data.error || "Registrazione fallita.", true); 
+                }
+            });
+        }
+        if (verifyEmailForm) {
+            verifyEmailForm.addEventListener('submit', async (e) => {
+                e.preventDefault(); const data = Object.fromEntries(new FormData(verifyEmailForm).entries());
+                const result = await apiCall('/api/auth/verify/email', 'POST', data);
+                if (result.ok) { 
+                    displayMessage(verifyEmailMessage, result.data.message || "Verifica completata!"); 
+                    await updateNavbarUI(); 
+                } else { 
+                    displayMessage(verifyEmailMessage, result.data.error || "Verifica fallita.", true); 
+                }
+            });
+        }
+        if (resendVerificationCodeBtn) {
+            resendVerificationCodeBtn.addEventListener('click', async () => {
+                const email = verifyEmailHiddenInput ? verifyEmailHiddenInput.value : null;
+                if (!email) { displayMessage(verifyEmailMessage, "Email non specificata per il reinvio.", true); return; }
+                resendVerificationCodeBtn.disabled = true; 
+                if(resendCooldownSpan) resendCooldownSpan.classList.remove('hidden');
+                let count = 30; 
+                if(resendCooldownSpan) resendCooldownSpan.textContent = ` Attendi ${count}s`;
+                resendTimer = setInterval(() => {
+                    count--; 
+                    if(resendCooldownSpan) resendCooldownSpan.textContent = ` Attendi ${count}s`;
+                    if (count <= 0) { 
+                        clearInterval(resendTimer); 
+                        resendVerificationCodeBtn.disabled = false; 
+                        if(resendCooldownSpan) resendCooldownSpan.classList.add('hidden');
+                    }
+                }, 1000);
+                const result = await apiCall('/api/auth/resend-verification', 'POST', { email });
+                if (result.ok) { displayMessage(verifyEmailMessage, result.data.message); }
+                else { 
+                    displayMessage(verifyEmailMessage, result.data.error || "Errore nel reinvio del codice.", true); 
+                    clearInterval(resendTimer); 
+                    resendVerificationCodeBtn.disabled = false; 
+                    if(resendCooldownSpan) resendCooldownSpan.classList.add('hidden');
+                }
+            });
+        }
+
+        document.getElementById('loginGoogleBtn')?.addEventListener('click', () => { if (API_BASE_URL !== 'IL_TUO_URL_RENDER_QUI' || window.location.href.startsWith('file://')) window.location.href = `${API_BASE_URL}/login/google`; else alert("Configurazione API non completata.");});
+        document.getElementById('loginFacebookBtn')?.addEventListener('click', () => { if (API_BASE_URL !== 'IL_TUO_URL_RENDER_QUI' || window.location.href.startsWith('file://')) window.location.href = `${API_BASE_URL}/login/facebook`; else alert("Configurazione API non completata.");});
+        document.getElementById('showRegisterEmailForm')?.addEventListener('click', (e) => { e.preventDefault(); showForm(registerEmailFormContainer); setLanguage(localStorage.getItem('erasmusHousingLang') || 'it'); });
+        document.getElementById('showLoginEmailForm')?.addEventListener('click', (e) => { e.preventDefault(); showForm(loginEmailFormContainer); setLanguage(localStorage.getItem('erasmusHousingLang') || 'it'); });
+        document.getElementById('backToLoginFromVerify')?.addEventListener('click', (e) => { e.preventDefault(); showForm(loginEmailFormContainer); setLanguage(localStorage.getItem('erasmusHousingLang') || 'it'); });
+        
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuIconOpen = document.getElementById('menuIconOpen');
+        const menuIconClose = document.getElementById('menuIconClose');
+        if (mobileMenuButton && mobileMenu && menuIconOpen && menuIconClose) {
+            mobileMenuButton.addEventListener('click', () => {
+                const isOpen = mobileMenu.classList.contains('open');
+                if (isOpen) {
+                    mobileMenu.style.maxHeight = '0px'; mobileMenu.style.opacity = '0';
+                    setTimeout(() => { if (mobileMenu.style.maxHeight === '0px') { mobileMenu.classList.add('hidden'); }}, 300); 
+                    mobileMenu.classList.remove('open');
+                    menuIconOpen.classList.remove('hidden'); menuIconClose.classList.add('hidden');
+                } else {
+                    mobileMenu.classList.remove('hidden'); 
+                    void mobileMenu.offsetWidth; 
+                    mobileMenu.style.maxHeight = '500px'; mobileMenu.style.opacity = '1'; 
+                    mobileMenu.classList.add('open'); 
+                    menuIconOpen.classList.add('hidden'); menuIconClose.classList.remove('hidden');
+                }
+            });
+            mobileMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => { 
+                    if (mobileMenu.classList.contains('open')) {
+                        mobileMenu.style.maxHeight = '0px'; mobileMenu.style.opacity = '0';
+                        setTimeout(() => mobileMenu.classList.add('hidden'), 300);
+                        mobileMenu.classList.remove('open');
+                        if(menuIconOpen) menuIconOpen.classList.remove('hidden');
+                        if(menuIconClose) menuIconClose.classList.add('hidden');
+                    }
+                });
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const preferredLang = localStorage.getItem('erasmusHousingLang') || 'it';
+            if (mobileMenu && menuIconOpen && menuIconClose) {
+                mobileMenu.classList.remove('open');
+                mobileMenu.style.maxHeight = '0px';
+                mobileMenu.style.opacity = '0';
+                mobileMenu.classList.add('hidden'); 
+                                            
+                menuIconOpen.classList.remove('hidden');
+                menuIconClose.classList.add('hidden');
+            }
+            setLanguage(preferredLang); 
+            updateNavbarUI(); 
+            setupLogoutButtons();
+            const urlParams = new URLSearchParams(window.location.search);
+            const oauth_message = urlParams.get('oauth_message'); 
+            const oauth_error = urlParams.get('oauth_error');
+            const verification_email = urlParams.get('verification_email'); 
+            
+            if (oauth_message) { 
+                displayMessage(loginEmailMessage, decodeURIComponent(oauth_message)); 
+                history.replaceState({}, document.title, window.location.pathname); 
+            } else if (oauth_error) { 
+                displayMessage(loginEmailMessage, decodeURIComponent(oauth_error), true); 
+                history.replaceState({}, document.title, window.location.pathname); 
+            }
+            
+            if(verification_email && verificationEmailDisplay && verifyEmailHiddenInput) { 
+                verificationEmailDisplay.textContent = verification_email;
+                verifyEmailHiddenInput.value = verification_email;
+                showForm(verifyEmailFormContainer); 
+                history.replaceState({}, document.title, window.location.pathname); 
+            } else if (!oauth_message && !oauth_error && !verification_email) { 
+                 if (!document.querySelector('#navUserProfileDesktop:not(.hidden)')) { showForm(loginEmailFormContainer); }
+            }
+            setLanguage(localStorage.getItem('erasmusHousingLang') || 'it');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+# Questo è un file di configurazione di base per Render.com
+# È configurato per un "Web Service" Python (Flask).
+
+services:
+  - type: web
+    name: erasmus-housing # Puoi cambiare questo nome
+    env: python
+    region: frankfurt # Scegli la regione più vicina ai tuoi utenti
+    plan: free # O un piano a pagamento se necessario
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app" # Avvia Flask con Gunicorn
+    healthCheckPath: /api/auth/status # Un endpoint semplice per i controlli di integrità
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11 # O la versione Python che preferisci e che Render supporta
+      - key: FLASK_APP # Non strettamente necessario con Gunicorn, ma buona pratica
+        value: app.py
+      - key: FLASK_ENV # Impostalo su 'production' per il deploy
+        value: production
+      # --- IMPORTANTISSIMO: Aggiungi qui TUTTE le tue variabili d'ambiente segrete ---
+      # --- NON caricarle su GitHub. Impostale nell'interfaccia di Render. ---
+      # Esempio (i valori reali li imposterai su Render):
+      # - key: FLASK_SECRET_KEY
+      #   value: "un-valore-segreto-molto-lungo-e-casuale-generato-per-produzione"
+      # - key: GOOGLE_CLIENT_ID
+      #   value: "xxxxxxxxxxxx.apps.googleusercontent.com"
+      # - key: GOOGLE_CLIENT_SECRET
+      #   value: "GOCSPX-xxxxxxxxxxxxxxxxxxxx"
+      # - key: FACEBOOK_APP_ID
+      #   value: "0000000000000000"
+      # - key: FACEBOOK_APP_SECRET
+      #   value: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      # - key: APP_BASE_URL # L'URL del tuo servizio su Render, es. https://nome-servizio.onrender.com
+      #   value: "https://NOME-TUO-SERVIZIO.onrender.com"
+      # - key: MAIL_SERVER
+      #   value: "smtp.tuoprovider.com"
+      # - key: MAIL_PORT
+      #   value: "587" # o 465, 2525 ecc.
+      # - key: MAIL_USE_TLS
+      #   value: "true" # o false
+      # - key: MAIL_USE_SSL
+      #   value: "false" # o true
+      # - key: MAIL_USERNAME
+      #   value: "tuo_username_smtp"
+      # - key: MAIL_PASSWORD
+      #   value: "tua_password_smtp_o_api_key"
+      # - key: MAIL_DEFAULT_SENDER
+      #   value: "noreply@tuodominio.com"
+
+# Potresti voler aggiungere un database gestito da Render in futuro:
+#  - type: psql # PostgreSQL
+#    name: erasmus-housing-db
+#    region: frankfurt
+#    plan: free # Attenzione ai limiti
+#    postgresMajorVersion: 15
+#    ipAllowList: [] # Permette connessioni da altri tuoi servizi Render
+#    # Se aggiungi un database, dovrai aggiungere una variabile d'ambiente
+#    # al tuo web service per la stringa di connessione:
+#    # envVars:
+#    #   - key: DATABASE_URL
+#    #     fromDatabase:
+#    #       name: erasmus-housing-db
+#    #       property: connectionString

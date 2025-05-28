@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="pageTitleMessages">I Miei Messaggi - Erasmus Housing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        #mobileMenu { transition: max-height 0.3s ease-out, opacity 0.3s ease-out; max-height: 0; opacity:0; overflow: hidden; }
+        #mobileMenu.open { max-height: 500px; opacity: 1; }
+        .language-switcher button { padding: 0.25rem 0.5rem; margin-left: 0.25rem; border-radius: 0.25rem; border: 1px solid transparent;}
+        .language-switcher button.active { background-color: #4f46e5; color: white; border-color: #4f46e5;}
+        .language-switcher button:not(.active):hover { background-color: #e0e7ff; }
+        .conversation-item.active { background-color: #e0e7ff; }
+        .conversation-item:hover { background-color: #f3f4f6; }
+        #chatMessagesContainer { height: calc(100vh - 240px); } /* Altezza base per desktop */
+        .message-bubble { max-width: 75%; padding: 0.5rem 0.75rem; border-radius: 0.75rem; margin-bottom: 0.5rem; word-wrap: break-word; line-height: 1.4; }
+        .message-sent { background-color: #4f46e5; color: white; margin-left: auto; border-bottom-right-radius: 0.125rem; }
+        .message-received { background-color: #e5e7eb; color: #1f2937; margin-right: auto; border-bottom-left-radius: 0.125rem; }
+        
+        @media (max-width: 767px) { /* md breakpoint di Tailwind */
+            .messaging-layout.chat-active #conversationsListContainer { display: none; }
+            .messaging-layout.chat-active #chatAreaContainer { display: flex !important; width: 100%; } /* Mostra l'area chat */
+            #chatMessagesContainer { height: calc(100vh - 190px); } /* Altezza chat per mobile */
+            #backToConversationsBtnContainer.chat-active { display: flex; } /* Mostra bottone indietro */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <a href="index.html" class="text-2xl font-bold text-indigo-600 mr-2 sm:mr-4">ErasmusHousing</a>
+                <div class="language-switcher text-xs flex">
+                    <button id="lang-it" data-lang="it" class="border-gray-300">IT</button>
+                    <button id="lang-en" data-lang="en" class="border-gray-300">EN</button>
+                </div>
+            </div>
+            <div class="md:hidden">
+                <button id="mobileMenuButton" aria-label="Apri menu" class="text-gray-700 focus:outline-none">
+                    <svg id="menuIconOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    <svg id="menuIconClose" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div id="navLinksDesktop" class="hidden md:flex space-x-3 lg:space-x-4 items-center text-sm lg:text-base">
+                <a href="index.html" data-translate-key="navHome" class="text-gray-600 hover:text-indigo-600 px-2 py-1">Home</a>
+                <a href="listings.html" data-translate-key="navListings" class="text-gray-600 hover:text-indigo-600 px-2 py-1">Annunci</a>
+                <a href="messages.html" id="navMessagesLinkDesktop" data-translate-key="navMessages" class="text-indigo-600 font-semibold px-2 py-1">Messaggi</a>
+                <a href="add-listing.html" id="navAddListingLinkDesktop" data-translate-key="navAddListing" class="text-gray-600 hover:text-indigo-600 px-2 py-1">Pubblica Annuncio</a>
+                <a href="login.html" id="navLoginLinkDesktop" data-translate-key="navLogin" class="bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 text-sm hidden">Login</a>
+                <div id="navUserProfileDesktop" class="hidden inline-flex items-center">
+                    <img id="navUserPicDesktop" src="https://placehold.co/40x40/A0AEC0/FFFFFF?text=U" alt="User" class="w-8 h-8 rounded-full mr-2 hidden object-cover">
+                    <span id="navUserNameDesktop" class="text-gray-700 mr-2 text-sm font-medium"></span>
+                    <button id="navLogoutBtnDesktop" data-translate-key="navLogout" class="bg-red-500 text-white px-2.5 py-1 rounded-md hover:bg-red-600 text-xs">Logout</button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobileMenu" class="md:hidden bg-white shadow-lg absolute top-full left-0 right-0 z-30">
+            <a href="index.html" data-translate-key="navHome" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 border-b border-gray-100">Home</a>
+            <a href="listings.html" data-translate-key="navListings" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 border-b border-gray-100">Annunci</a>
+            <a href="messages.html" id="navMessagesLinkMobile" data-translate-key="navMessages" class="block px-4 py-3 text-indigo-500 font-semibold bg-indigo-50 border-b border-gray-100">Messaggi</a>
+            <a href="add-listing.html" id="navAddListingLinkMobile" data-translate-key="navAddListing" class="block px-4 py-3 text-gray-700 hover:bg-indigo-50 border-b border-gray-100">Pubblica Annuncio</a>
+            <div class="px-4 py-3 mt-2 border-t border-gray-200">
+                <a href="login.html" id="navLoginLinkMobile" data-translate-key="navLogin" class="block text-center w-full bg-indigo-600 text-white px-4 py-2.5 rounded-md hover:bg-indigo-700 mb-2 hidden">Login</a>
+                <div id="navUserProfileMobile" class="hidden text-center">
+                    <img id="navUserPicMobile" src="https://placehold.co/40x40/A0AEC0/FFFFFF?text=U" alt="User" class="w-10 h-10 rounded-full mx-auto mb-2 hidden object-cover">
+                    <span id="navUserNameMobile" class="block text-gray-700 mb-2 font-medium"></span>
+                    <button id="navLogoutBtnMobile" data-translate-key="navLogout" class="w-full bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-0 sm:px-4 md:px-6 py-4 sm:py-8 flex-grow">
+        <div id="messagingPageContentContainer" class="h-full">
+             </div>
+    </main>
+    
+    <footer id="contact" class="bg-gray-800 text-white py-10 md:py-12 mt-auto">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                <div><h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4" data-translate-key="footerErasmusHousing">ErasmusHousing</h3><p class="text-sm text-gray-400" data-translate-key="footerDescription">La tua piattaforma per alloggi Erasmus.</p></div>
+                <div><h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4" data-translate-key="footerUsefulLinks">Link Utili</h3><ul class="space-y-1.5 sm:space-y-2"><li class="text-sm"><a href="index.html#contact" data-translate-key="footerContactUsInline" class="text-gray-400 hover:text-white">Contatti</a></li><li class="text-sm"><a href="listings.html" data-translate-key="footerSearchListings" class="text-gray-400 hover:text-white">Cerca Annunci</a></li><li class="text-sm"><a href="add-listing.html" id="footerAddListingLink" data-translate-key="footerAddListing" class="text-gray-400 hover:text-white">Pubblica Annuncio</a></li></ul></div>
+                <div>
+                    <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4" data-translate-key="footerContactUs">Contattaci</h3>
+                    <p class="text-sm text-gray-400">Email: info@erasmus-housing.com</p>
+                    <div class="flex space-x-4 mt-4 justify-center md:justify-start">
+                        <a href="https://www.instagram.com/erasmushousing/?utm_source=ig_web_button_share_sheet" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white" aria-label="Instagram">
+                            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6"> {/* Nota: rimosso fill="currentColor" e viewBox modificato se necessario */}
+                                <defs>
+                                    <radialGradient id="instaGradient" gradientUnits="userSpaceOnUse" cx="19.38" cy="42.035" r="44.899">
+                                        <stop offset="0" stop-color="#fd5"/>
+                                        <stop offset=".328" stop-color="#ff543f"/>
+                                        <stop offset=".348" stop-color="#fc5245"/>
+                                        <stop offset=".504" stop-color="#e64771"/>
+                                        <stop offset=".643" stop-color="#d53e91"/>
+                                        <stop offset=".761" stop-color="#cc39a4"/>
+                                        <stop offset=".841" stop-color="#c837ab"/>
+                                    </radialGradient>
+                                </defs>
+                                <path fill="url(#instaGradient)" d="M34.017,41.99l-20,0.019c-4.4,0.004-8.003-3.592-8.008-7.992l-0.019-20	c-0.004-4.4,3.592-8.003,7.992-8.008l20-0.019c4.4-0.004,8.003,3.592,8.008,7.992l0.019,20	C42.014,38.383,38.417,41.986,34.017,41.99z"/>
+                                <path fill="#fff" d="M24,31c-3.859,0-7-3.141-7-7s3.141-7,7-7s7,3.141,7,7S27.859,31,24,31z M24,19c-2.757,0-5,2.243-5,5	s2.243,5,5,5s5-2.243,5-5S26.757,19,24,19z"/>
+                                <circle cx="31.5" cy="16.5" r="1.5" fill="#fff"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 border-t border-gray-700 pt-8 text-center text-gray-500 text-sm"><p>&copy; <span id="currentYearMessages"></span> ErasmusHousing. <span data-translate-key="footerAllRightsReserved">Tutti i diritti riservati.</span></p></div>
+        </div>
+    </footer>
+    
+    <script>
+        // IMPORTANTE: Sostituisci 'IL_TUO_URL_RENDER_QUI' con l'URL effettivo del tuo servizio Render.
+        const API_BASE_URL = 'https://erasmushousing.onrender.com'; 
+        
+        document.getElementById('currentYearMessages').textContent = new Date().getFullYear();
+        const messagingPageContentContainerEl = document.getElementById('messagingPageContentContainer');
+        let conversationsListEl, noConversationsMessageEl, chatAreaContainerEl, chatHeaderEl, chatWithUserNameEl, chatListingTitleEl, chatMessagesContainerEl, noMessagesSelectedEl, sendMessageFormEl, messageInputEl, backToConversationsBtnEl;
+        let currentUserId = null;
+        let currentOpenConversationId = null;
+        let currentOpenConversationDetails = null;
+        let messagePollingInterval = null;
+
+        function setupMessageUIElements() {
+            conversationsListEl = document.getElementById('conversationsList');
+            noConversationsMessageEl = document.getElementById('noConversationsMessage');
+            chatAreaContainerEl = document.getElementById('chatAreaContainer');
+            chatHeaderEl = document.getElementById('chatHeader');
+            chatWithUserNameEl = document.getElementById('chatWithUserName');
+            chatListingTitleEl = document.getElementById('chatListingTitle');
+            chatMessagesContainerEl = document.getElementById('chatMessagesContainer');
+            noMessagesSelectedEl = document.getElementById('noMessagesSelected');
+            sendMessageFormEl = document.getElementById('sendMessageForm');
+            messageInputEl = document.getElementById('messageInput');
+            backToConversationsBtnEl = document.getElementById('backToConversationsBtn');
+
+            if (sendMessageFormEl) sendMessageFormEl.addEventListener('submit', handleSendMessageSubmit);
+            if (backToConversationsBtnEl) backToConversationsBtnEl.addEventListener('click', showConversationsListOnMobile);
+        }
+        
+        function displayMessagingInterface() {
+            messagingPageContentContainerEl.innerHTML = `
+                <div class="messaging-layout flex flex-col md:flex-row h-[calc(100vh-100px)] md:h-[calc(100vh-140px)] bg-white shadow-xl rounded-lg overflow-hidden">
+                    <aside id="conversationsListContainer" class="w-full md:w-1/3 lg:w-1/4 border-r border-gray-200 overflow-y-auto flex flex-col">
+                        <div class="p-3 sm:p-4 border-b border-gray-200 sticky top-0 bg-white z-10">
+                            <h2 class="text-lg sm:text-xl font-semibold text-gray-700" data-translate-key="conversationsTitle">Conversazioni</h2>
+                        </div>
+                        <div id="conversationsList" class="divide-y divide-gray-200 flex-grow overflow-y-auto">
+                            <p id="noConversationsMessage" class="p-4 text-gray-500 text-sm hidden" data-translate-key="noConversationsText">Nessuna conversazione.</p>
+                        </div>
+                    </aside>
+                    <section id="chatAreaContainer" class="flex-1 flex-col md:flex hidden">
+                        <div id="chatHeader" class="p-3 sm:p-4 border-b border-gray-200 bg-gray-50 flex items-center">
+                            <button id="backToConversationsBtn" aria-label="Torna alle conversazioni" class="md:hidden text-indigo-600 hover:text-indigo-800 mr-3 p-1 hidden">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                            </button>
+                            <div>
+                                <h3 id="chatWithUserName" class="text-base sm:text-lg font-semibold text-indigo-700" data-translate-key="selectConversationPrompt">Seleziona una conversazione</h3>
+                                <p id="chatListingTitle" class="text-xs sm:text-sm text-gray-500"></p>
+                            </div>
+                        </div>
+                        <div id="chatMessagesContainer" class="flex-1 p-3 sm:p-4 space-y-2 bg-gray-50 overflow-y-auto">
+                            <p id="noMessagesSelected" class="text-center text-gray-500 mt-10 text-sm" data-translate-key="selectConversationToView">Seleziona una conversazione per visualizzare i messaggi.</p>
+                        </div>
+                        <div id="chatInputContainer" class="p-3 sm:p-4 border-t border-gray-200 bg-gray-100">
+                            <form id="sendMessageForm" class="flex items-center space-x-2 sm:space-x-3">
+                                <input type="text" id="messageInput" name="content" data-translate-key="typeMessagePlaceholder" placeholder="Scrivi un messaggio..." required class="flex-1 px-3 sm:px-4 py-2 border border-gray-300 rounded-full focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                <button type="submit" class="bg-indigo-600 text-white px-4 sm:px-5 py-2 rounded-full hover:bg-indigo-700 font-semibold text-sm" data-translate-key="sendButton">Invia</button>
+                            </form>
+                        </div>
+                    </section>
+                </div>`;
+            setupMessageUIElements();
+            setLanguage(localStorage.getItem('erasmusHousingLang') || 'it');
+        }
+
+        function displayLoginPromptForMessages() {
+             messagingPageContentContainerEl.innerHTML = `
+                <div class="bg-white p-8 md:p-10 rounded-lg shadow-xl text-center h-full flex flex-col justify-center items-center">
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6" data-translate-key="loginRequiredTitle">Accesso Richiesto</h1>
+                    <p class="text-gray-600 text-sm sm:text-base mb-8" data-translate-key="loginRequiredTextMessages">Devi effettuare il login per vedere i tuoi messaggi.</p>
+                    <a href="login.html?redirect=${encodeURIComponent(window.location.pathname)}" class="bg-indigo-600 text-white px-8 py-3 rounded-md hover:bg-indigo-700 text-base sm:text-lg font-semibold" data-translate-key="goToLoginButton">Vai al Login</a>
+                </div>`;
+            setLanguage(localStorage.getItem('erasmusHousingLang') || 'it');
+        }
+        
+        function showChatAreaOnMobile() {
+            const layout = messagingPageContentContainerEl.querySelector('.messaging-layout');
+            if (layout) layout.classList.add('chat-active');
+            if (chatAreaContainerEl) chatAreaContainerEl.classList.remove('hidden'); 
+            if (backToConversationsBtnEl) backToConversationsBtnEl.classList.remove('hidden');
+        }
+
+        function showConversationsListOnMobile() {
+            const layout = messagingPageContentContainerEl.querySelector('.messaging-layout');
+            if (layout) layout.classList.remove('chat-active');
+            if (chatAreaContainerEl) chatAreaContainerEl.classList.add('hidden');
+            if (backToConversationsBtnEl) backToConversationsBtnEl.classList.add('hidden');
+            if (messagePollingInterval) clearInterval(messagePollingInterval); 
+            currentOpenConversationId = null; 
+        }
+
+        function displayConversationsUI(conversations) { 
+            if (!conversationsListEl) return;
+            conversationsListEl.innerHTML = '';
+            if (conversations && conversations.length > 0) {
+                if(noConversationsMessageEl) noConversationsMessageEl.classList.add('hidden');
+                conversations.forEach(convo => {
+                    const convoItem = document.createElement('div');
+                    convoItem.className = 'p-3 hover:bg-gray-100 cursor-pointer conversation-item';
+                    if (convo.conversation_id === currentOpenConversationId) convoItem.classList.add('active');
+                    convoItem.dataset.conversationId = convo.conversation_id;
+                    convoItem.dataset.otherUserName = convo.other_user_name;
+                    convoItem.dataset.listingTitle = convo.listing_title;
+                    convoItem.dataset.listingId = convo.listing_id;
+                    convoItem.dataset.receiverId = convo.other_user_id;
+                    convoItem.innerHTML = `<div class="flex justify-between items-center"><h4 class="font-semibold text-gray-800 text-sm sm:text-base truncate">${convo.other_user_name}</h4><span class="text-xs text-gray-400 whitespace-nowrap">${new Date(convo.last_message_timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></div><p class="text-xs sm:text-sm text-gray-600 truncate">Annuncio: ${convo.listing_title}</p><p class="text-xs sm:text-sm text-gray-500 truncate ${convo.is_last_message_from_current_user ? 'italic' : ''}">${convo.is_last_message_from_current_user ? 'Tu: ' : ''}${convo.last_message_snippet}</p>`;
+                    convoItem.addEventListener('click', () => loadMessagesForConversationUI(convo.conversation_id, convo.other_user_name, convo.listing_title, convo.listing_id, convo.other_user_id));
+                    conversationsListEl.appendChild(convoItem);
+                });
+            } else {
+                if(noConversationsMessageEl) { noConversationsMessageEl.textContent = translations[localStorage.getItem('erasmusHousingLang') || 'it']?.noConversationsText || "Nessuna conversazione attiva."; noConversationsMessageEl.classList.remove('hidden');}
+            }
+        }
+        function displayMessagesUI(messages) { 
+            if (!chatMessagesContainerEl) return;
+            chatMessagesContainerEl.innerHTML = '';
+            if (messages && messages.length > 0) {
+                if(noMessagesSelectedEl) noMessagesSelectedEl.classList.add('hidden');
+                messages.forEach(msg => appendMessageToChatUI(msg, false)); 
+                chatMessagesContainerEl.scrollTop = chatMessagesContainerEl.scrollHeight;
+            } else {
+                chatMessagesContainerEl.innerHTML = `<p class="text-center text-gray-500 text-sm" data-translate-key="noMessagesStart">${translations[localStorage.getItem('erasmusHousingLang') || 'it']?.noMessagesStart || "Nessun messaggio. Inizia tu!"}</p>`;
+            }
+        }
+        function appendMessageToChatUI(message, scroll = true) { 
+            if (!chatMessagesContainerEl || !currentUserId) return;
+            const noMsgP = chatMessagesContainerEl.querySelector('p.text-center');
+            if (noMsgP) noMsgP.remove();
+            const msgDiv = document.createElement('div'); msgDiv.classList.add('message-bubble'); msgDiv.textContent = message.content;
+            const tsSpan = document.createElement('span'); tsSpan.className = 'block text-xs opacity-70 mt-1';
+            tsSpan.textContent = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            if (message.sender_id === currentUserId) { msgDiv.classList.add('message-sent'); tsSpan.classList.add('text-right'); }
+            else { msgDiv.classList.add('message-received'); }
+            msgDiv.appendChild(tsSpan); chatMessagesContainerEl.appendChild(msgDiv);
+            if(scroll) chatMessagesContainerEl.scrollTop = chatMessagesContainerEl.scrollHeight;
+        }
+
+        async function fetchConversationsAPI() { 
+            if (!currentUserId) return;
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/conversations`);
+                if (!response.ok) throw new Error(`Errore HTTP: ${response.status}`);
+                const conversations = await response.json();
+                displayConversationsUI(conversations);
+                if (currentOpenConversationId && conversationsListEl) {
+                    const activeItem = conversationsListEl.querySelector(`.conversation-item[data-conversation-id="${currentOpenConversationId}"]`);
+                    if (activeItem) activeItem.classList.add('active');
+                }
+            } catch (error) {
+                console.error("Errore caricamento conversazioni:", error);
+                if(noConversationsMessageEl) { noConversationsMessageEl.textContent = translations[localStorage.getItem('erasmusHousingLang') || 'it']?.errorLoadingConversations || "Impossibile caricare conversazioni."; noConversationsMessageEl.classList.remove('hidden');}
+            }
+        }
+        async function loadMessagesForConversationUI(convoId, otherUser, listingTitle, listingId, receiverId) { 
+            if (messagePollingInterval) clearInterval(messagePollingInterval);
+            currentOpenConversationId = convoId;
+            currentOpenConversationDetails = { listingId, receiverId };
+            document.querySelectorAll('.conversation-item.active').forEach(el => el.classList.remove('active'));
+            const activeItem = conversationsListEl?.querySelector(`.conversation-item[data-conversation-id="${convoId}"]`);
+            if (activeItem) activeItem.classList.add('active');
+            if(chatWithUserNameEl) chatWithUserNameEl.textContent = otherUser;
+            if(chatListingTitleEl) chatListingTitleEl.textContent = `${translations[localStorage.getItem('erasmusHousingLang') || 'it']?.listingLabel || "Annuncio:"} ${listingTitle}`;
+            if(noMessagesSelectedEl) noMessagesSelectedEl.classList.add('hidden');
+            if(chatMessagesContainerEl) chatMessagesContainerEl.innerHTML = `<p class="text-center text-gray-500 text-sm" data-translate-key="loadingMessages">${translations[localStorage.getItem('erasmusHousingLang') || 'it']?.loadingMessages || "Caricamento..."}</p>`;
+            showChatAreaOnMobile(); 
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/conversations/${convoId}/messages`);
+                if (!response.ok) throw new Error(`Errore HTTP: ${response.status}`);
+                const messages = await response.json();
+                displayMessagesUI(messages);
+                messagePollingInterval = setInterval(() => fetchNewMessagesAPI(convoId), 7000);
+            } catch (error) {
+                console.error(`Errore caricamento messaggi per ${convoId}:`, error);
+                if(chatMessagesContainerEl) chatMessagesContainerEl.innerHTML = `<p class="text-center text-red-500 text-sm" data-translate-key="errorLoadingMessages">${translations[localStorage.getItem('erasmusHousingLang') || 'it']?.errorLoadingMessages || "Impossibile caricare messaggi."}</p>`;
+            }
+        }
+        async function fetchNewMessagesAPI(conversationId) { 
+            if (currentOpenConversationId !== conversationId || !chatMessagesContainerEl) { if (messagePollingInterval) clearInterval(messagePollingInterval); return; }
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/conversations/${conversationId}/messages`);
+                if (!response.ok) { console.warn("Polling: Errore fetch"); return; }
+                const messages = await response.json();
+                const currentBubbles = chatMessagesContainerEl.querySelectorAll('.message-bubble');
+                if (messages.length !== currentBubbles.length || (messages.length > 0 && currentBubbles.length > 0 && !currentBubbles[currentBubbles.length-1].textContent.includes(messages[messages.length-1].content))) {
+                    displayMessagesUI(messages);
+                }
+            } catch (error) { console.warn("Polling: Errore:", error); }
+        }
+        async function handleSendMessageSubmit(e) { 
+            e.preventDefault();
+            if (!currentOpenConversationId || !currentOpenConversationDetails || !messageInputEl) return;
+            const content = messageInputEl.value.trim(); if (!content) return;
+            const messageData = { receiver_id: currentOpenConversationDetails.receiverId, listing_id: currentOpenConversationDetails.listingId, content: content };
+            if (API_BASE_URL === 'IL_TUO_URL_RENDER_QUI' && !window.location.href.startsWith('file://')) { alert(translations[localStorage.getItem('erasmusHousingLang') || 'it']?.errorApiNotConfiguredSend || "Configurazione API non completata."); return;}
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/messages/send`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(messageData) });
+                const result = await response.json();
+                if (response.ok && result.sent_message) { appendMessageToChatUI(result.sent_message); messageInputEl.value = ''; fetchConversationsAPI(); } 
+                else { alert((translations[localStorage.getItem('erasmusHousingLang') || 'it']?.errorSendingMessage || "Errore invio: ") + (result.error || 'Sconosciuto')); }
+            } catch (error) { console.error("Errore invio messaggio:", error); alert(translations[localStorage.getItem('erasmusHousingLang') || 'it']?.errorNetworkSend || "Errore di rete invio messaggio."); }
+        }
+
+        // --- Navbar Dinamica e Logica Lingua (Standardizzata) ---
+        const navLoginLinkDesktop = document.getElementById('navLoginLinkDesktop');
+        const navUserProfileDesktop = document.getElementById('navUserProfileDesktop');
+        const navUserNameDesktop = document.getElementById('navUserNameDesktop');
+        const navUserPicDesktop = document.getElementById('navUserPicDesktop');
+        const navLogoutBtnDesktop = document.getElementById('navLogoutBtnDesktop');
+        const navMessagesLinkDesktop = document.getElementById('navMessagesLinkDesktop');
+        const navAddListingLinkDesktop = document.getElementById('navAddListingLinkDesktop');
+        const navLoginLinkMobile = document.getElementById('navLoginLinkMobile');
+        const navUserProfileMobile = document.getElementById('navUserProfileMobile');
+        const navUserNameMobile = document.getElementById('navUserNameMobile');
+        const navUserPicMobile = document.getElementById('navUserPicMobile');
+        const navLogoutBtnMobile = document.getElementById('navLogoutBtnMobile');
+        const navMessagesLinkMobile = document.getElementById('navMessagesLinkMobile');
+        const navAddListingLinkMobile = document.getElementById('navAddListingLinkMobile');
+        const footerAddListingLink = document.getElementById('footerAddListingLink');
+        
+        const translations = { 
+            it: {
+                pageTitleMessages: "I Miei Messaggi - Erasmus Housing",
+                navHome: "Home", navListings: "Annunci", navMessages: "Messaggi", navAddListing: "Pubblica Annuncio", navLogin: "Login", navLogout: "Logout",
+                conversationsTitle: "Conversazioni",
+                noConversationsText: "Nessuna conversazione attiva.",
+                selectConversationPrompt: "Seleziona una conversazione",
+                selectConversationToView: "Seleziona una conversazione per visualizzare i messaggi.",
+                typeMessagePlaceholder: "Scrivi un messaggio...",
+                sendButton: "Invia",
+                loginRequiredTitle: "Accesso Richiesto",
+                loginRequiredTextMessages: "Devi effettuare il login per vedere i tuoi messaggi.",
+                goToLoginButton: "Vai al Login",
+                listingLabel: "Annuncio:",
+                loadingMessages: "Caricamento messaggi...",
+                errorLoadingMessages: "Impossibile caricare i messaggi.",
+                noMessagesStart: "Nessun messaggio. Inizia tu!",
+                errorLoadingConversations: "Impossibile caricare le conversazioni.",
+                errorApiNotConfiguredSend: "Configurazione API non completata. Impossibile inviare.",
+                errorSendingMessage: "Errore invio: ",
+                errorNetworkSend: "Errore di rete durante l'invio del messaggio.",
+                footerErasmusHousing: "ErasmusHousing", footerDescription: "La tua piattaforma per alloggi Erasmus.", footerUsefulLinks: "Link Utili", footerContactUsInline: "Contatti", footerSearchListings: "Cerca Annunci", footerAddListing: "Pubblica Annuncio", footerContactUs: "Contattaci", footerAllRightsReserved: "Tutti i diritti riservati."
+            },
+            en: {
+                pageTitleMessages: "My Messages - Erasmus Housing",
+                navHome: "Home", navListings: "Listings", navMessages: "Messages", navAddListing: "Post Ad", navLogin: "Login", navLogout: "Logout",
+                conversationsTitle: "Conversations",
+                noConversationsText: "No active conversations.",
+                selectConversationPrompt: "Select a conversation",
+                selectConversationToView: "Select a conversation to view messages.",
+                typeMessagePlaceholder: "Type a message...",
+                sendButton: "Send",
+                loginRequiredTitle: "Login Required",
+                loginRequiredTextMessages: "You must be logged in to see your messages.",
+                goToLoginButton: "Go to Login",
+                listingLabel: "Listing:",
+                loadingMessages: "Loading messages...",
+                errorLoadingMessages: "Could not load messages.",
+                noMessagesStart: "No messages yet. Start the conversation!",
+                errorLoadingConversations: "Could not load conversations.",
+                errorApiNotConfiguredSend: "API configuration not complete. Cannot send.",
+                errorSendingMessage: "Error sending: ",
+                errorNetworkSend: "Network error while sending message.",
+                footerErasmusHousing: "ErasmusHousing", footerDescription: "Your platform for Erasmus housing.", footerUsefulLinks: "Useful Links", footerContactUsInline: "Contact", footerSearchListings: "Search Listings", footerAddListing: "Post Ad", footerContactUs: "Contact Us", footerAllRightsReserved: "All rights reserved."
+            }
+        };
+
+        function setLanguage(lang) {
+            localStorage.setItem('erasmusHousingLang', lang); 
+            document.documentElement.lang = lang;
+            document.querySelectorAll('[data-translate-key]').forEach(element => {
+                const key = element.getAttribute('data-translate-key');
+                if (translations[lang] && translations[lang][key]) {
+                    if (element.tagName === 'INPUT' && element.placeholder) { element.placeholder = translations[lang][key]; }
+                    else if (element.tagName === 'TITLE') { document.title = translations[lang][key]; }
+                    else { element.textContent = translations[lang][key]; }
+                }
+            });
+            const langItButton = document.getElementById('lang-it');
+            const langEnButton = document.getElementById('lang-en');
+            if (langItButton) langItButton.classList.toggle('active', lang === 'it');
+            if (langEnButton) langEnButton.classList.toggle('active', lang === 'en');
+        }
+        
+        const langItButton = document.getElementById('lang-it');
+        const langEnButton = document.getElementById('lang-en');
+        if (langItButton) langItButton.addEventListener('click', (e) => { e.preventDefault(); setLanguage('it'); });
+        if (langEnButton) langEnButton.addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
+
+        async function updateNavbarUI() {
+            let isLoggedIn = false; let userData = null;
+            if (API_BASE_URL === 'IL_TUO_URL_RENDER_QUI' && !window.location.href.startsWith('file://')) { console.warn("API_BASE_URL non configurato.");}
+            else if (API_BASE_URL !== 'IL_TUO_URL_RENDER_QUI' || window.location.href.startsWith('file://')) {
+                 try { const response = await fetch(`${API_BASE_URL}/api/auth/status`); const data = await response.json(); if (data.logged_in && data.user) { isLoggedIn = true; userData = data.user; currentUserId = data.user.id; }}
+                catch (error) { console.error("Errore fetch /api/auth/status:", error); currentUserId = null; }
+            }
+
+            if (isLoggedIn) { displayMessagingInterface(); fetchConversationsAPI(); } 
+            else { displayLoginPromptForMessages(); if (messagePollingInterval) clearInterval(messagePollingInterval); }
+
+            const updateElements = (loginLink, userProfile, userName, userPic, messagesLink, addListingLink) => {
+                if (loginLink) { isLoggedIn ? loginLink.classList.add('hidden') : loginLink.classList.remove('hidden'); }
+                if (userProfile) { isLoggedIn ? userProfile.classList.remove('hidden') : userProfile.classList.add('hidden'); }
+                if (isLoggedIn && userData) {
+                    if (userName) userName.textContent = userData.name || userData.email;
+                    if (userPic) { userPic.src = userData.profile_pic || 'https://placehold.co/40x40/A0AEC0/FFFFFF?text=U'; userPic.classList.remove('hidden');}
+                    if (messagesLink) messagesLink.classList.remove('hidden');
+                } else {
+                    if (userPic) userPic.classList.add('hidden');
+                    if (messagesLink) messagesLink.classList.add('hidden');
+                }
+                const addListingTargetUrl = 'add-listing.html'; const loginRedirectForAddListing = `login.html?redirect=${encodeURIComponent(addListingTargetUrl)}`;
+                if (addListingLink) { addListingLink.href = isLoggedIn ? addListingTargetUrl : loginRedirectForAddListing; }
+            };
+            updateElements(navLoginLinkDesktop, navUserProfileDesktop, navUserNameDesktop, navUserPicDesktop, navMessagesLinkDesktop, navAddListingLinkDesktop);
+            updateElements(navLoginLinkMobile, navUserProfileMobile, navUserNameMobile, navUserPicMobile, navMessagesLinkMobile, navAddListingLinkMobile);
+            if(footerAddListingLink) footerAddListingLink.href = isLoggedIn ? 'add-listing.html' : `login.html?redirect=${encodeURIComponent('add-listing.html')}`;
+        }
+        function setupLogoutButtons() {
+            const handleLogout = async () => {
+                if (API_BASE_URL === 'IL_TUO_URL_RENDER_QUI' && !window.location.href.startsWith('file://')) { alert("Configurazione API non completata."); return; }
+                try { const resp = await fetch(`${API_BASE_URL}/api/auth/logout`, { method: 'POST' }); if (resp.ok) { currentUserId = null; if (messagePollingInterval) clearInterval(messagePollingInterval); await updateNavbarUI(); window.location.href = 'index.html';} else { console.error("Logout fallito"); }}
+                catch (err) { console.error("Errore logout:", err); }
+            };
+            if (navLogoutBtnDesktop) navLogoutBtnDesktop.addEventListener('click', handleLogout);
+            if (navLogoutBtnMobile) navLogoutBtnMobile.addEventListener('click', handleLogout);
+        }
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuIconOpen = document.getElementById('menuIconOpen');
+        const menuIconClose = document.getElementById('menuIconClose');
+        if (mobileMenuButton && mobileMenu && menuIconOpen && menuIconClose) {
+            mobileMenuButton.addEventListener('click', () => {
+                const isOpen = mobileMenu.classList.contains('open');
+                if (isOpen) {
+                    mobileMenu.style.maxHeight = '0px'; mobileMenu.style.opacity = '0';
+                    setTimeout(() => { if (mobileMenu.style.maxHeight === '0px') { mobileMenu.classList.add('hidden'); }}, 300); 
+                    mobileMenu.classList.remove('open');
+                    menuIconOpen.classList.remove('hidden'); menuIconClose.classList.add('hidden');
+                } else {
+                    mobileMenu.classList.remove('hidden'); 
+                    void mobileMenu.offsetWidth; 
+                    mobileMenu.style.maxHeight = '500px'; mobileMenu.style.opacity = '1'; 
+                    mobileMenu.classList.add('open'); 
+                    menuIconOpen.classList.add('hidden'); menuIconClose.classList.remove('hidden');
+                }
+            });
+            mobileMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => { 
+                    if (mobileMenu.classList.contains('open')) {
+                        mobileMenu.style.maxHeight = '0px'; mobileMenu.style.opacity = '0';
+                        setTimeout(() => mobileMenu.classList.add('hidden'), 300);
+                        mobileMenu.classList.remove('open');
+                        if(menuIconOpen) menuIconOpen.classList.remove('hidden');
+                        if(menuIconClose) menuIconClose.classList.add('hidden');
+                    }
+                });
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const preferredLang = localStorage.getItem('erasmusHousingLang') || 'it';
+            if (mobileMenu && menuIconOpen && menuIconClose) {
+                mobileMenu.classList.remove('open');
+                mobileMenu.style.maxHeight = '0px';
+                mobileMenu.style.opacity = '0';
+                mobileMenu.classList.add('hidden'); 
+                                            
+                menuIconOpen.classList.remove('hidden');
+                menuIconClose.classList.add('hidden');
+            }
+            setLanguage(preferredLang); 
+            updateNavbarUI(); 
+            setupLogoutButtons();
+            const urlParams = new URLSearchParams(window.location.search);
+            const startWithUserIdParam = urlParams.get('start_conversation_with');
+            const forListingIdParam = urlParams.get('listing_id');
+            if (startWithUserIdParam && forListingIdParam) {
+                 console.log(`Richiesta avvio/apertura conversazione con utente ${startWithUserIdParam} per annuncio ${forListingIdParam}. Selezionare dalla lista.`);
+            }
+        });
+    </script>
+</body>
+</html>
